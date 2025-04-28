@@ -324,7 +324,15 @@ class FormulaMeasurementLogs extends BaseCommand
 	{
 		try {
 			if ($insertLogs) {
-				$this->measurement_logs->insert($logs);
+				$exists = $this->measurement_logs
+					->where('time_group', $logs['time_group'])
+					->where('xtimestamp', $logs['xtimestamp'])
+					->where('parameter_id', $logs['parameter_id'])
+					->first();
+
+				if (!$exists) {
+					$this->measurement_logs->insert($logs);
+				} 
 			}
 			// Check is parameter exist
 			$parameterId = $logs["parameter_id"];
@@ -347,7 +355,9 @@ class FormulaMeasurementLogs extends BaseCommand
 				"ppb_value" => $value_ppb
 			]);
 		} catch (Exception $e) {
-			log_message("error", "Insert Logs : " . $e->getMessage());
+			if (strpos($e->getMessage(), 'Duplicate entry') === false) {
+				log_message("error", "Insert Logs : " . $e->getMessage());
+			}
 			return false;
 		}
 	}
