@@ -163,11 +163,20 @@ class FormulaMeasurementLogs extends BaseCommand
 
 					try {
 						eval("\$measured = $parameter->formula ?? -1;");
+						if (!is_numeric($measured)) {
+							$measured = 0;
+						}
+						$measured = (float) $measured;
 						$raw = $measured;
+
 						if ($parameter->formula1) {
 							eval("\$value_ppb = $parameter->formula1;");
+							if (!is_numeric($value_ppb)) {
+								$value_ppb = 0;
+							}
+							$value_ppb = (float) $value_ppb;
 						}
-					} catch (Exception $e) {
+					} catch (\Throwable $e) {
 						$measured = 0;
 						$raw = 0;
 						$value_ppb = 0;
