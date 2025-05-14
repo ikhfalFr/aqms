@@ -163,7 +163,7 @@ class Average30Min extends BaseCommand
                 }
 		   }catch(DivisionByZeroError | Exception $e){
 				// CLI::error($e->getMessage());
-				log_message("error","AVG 30 MIN : ".$e->getMessage());
+				log_message("error",$parameter->code." AVG 30 MIN : ".$e->getMessage());
 		   }
         }
         /* Meteorology */
