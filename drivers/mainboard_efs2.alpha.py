@@ -17,17 +17,26 @@ def store_data_batch(
     sensor_reader_id: str, pin: str, data: str, prefix_return: str = None
 ):
     try:
-        datas = (
-            data.replace(" ", "").split(prefix_return)
-            if prefix_return
-            else data.replace(" ", "")
-        )
-        for index, res in enumerate(datas):
-            new_pin = str(pin) + str(index + 1)
-            if "ERROR" in res:
+        clean_data = data.replace(" ", "")
+        clean_data = clean_data.replace("SEMEATECH_BATCH;", "")
+        clean_data = clean_data.replace("END_SEMEATECH_BATCH;", "")
+        
+        split_key = "SEMEATECH_DATA;"
+        parts = clean_data.split(split_key)
+        
+        index = 1
+        for part in parts:
+            part = part.strip()
+            if part == "" or part.startswith("SEMEATECH_BATCH") or part.startswith("END_"):
+                continue
+
+            full_data = split_key + part + "SEMEATECH_DATA"
+            new_pin = str(pin) + str(index)
+            if 'ERROR' in part:
                 db.update_sensor_values(sensor_reader_id, new_pin, -999)
             else:
-                db.update_sensor_values(sensor_reader_id, new_pin, res)
+                db.update_sensor_values(sensor_reader_id, new_pin, full_data)
+            index += 1
 
     except Exception as e:
         print("Data Batch Validation Error: " + str(e))
@@ -118,16 +127,20 @@ def get_motherboard_value(ser, command, prefix_return):
     try:
         if ser is None:
             return None
+        
         max_timeout = 50
         timeout = 0
         responses = ""
         ser.write(bytes(command, "utf-8"))
+        
+        sleep(1)
+        
         timeout = 0
         while responses.find(prefix_return) == -1 and timeout < max_timeout:
             line = ser.readline().decode("utf-8").strip("\r\n")
             if "END_PLC_DELTA" not in line:
                 responses += line
-
+                    
             # tambahakan kode pengecheckan apakah response = SELESAI CALIBRATION?
 
             timeout += 1
@@ -487,7 +500,15 @@ def main():
                 prefix_return = motherboard["prefix_return"]
                 prefix_return_batch = motherboard["prefix_return_batch"]
 
-                response = get_motherboard_value(ser, command, prefix_return)
+                max_retries = 3
+                retry_count = 0
+                while retry_count < max_retries:
+                    response = get_motherboard_value(ser, command, prefix_return)
+                    if "ERROR_NOT_FOUND" not in response:
+                        break
+                    print(f"Retry {retry_count + 1} due to ERROR_NOT_FOUND")
+                    sleep(1)
+                    retry_count += 1
 
                 if response in ["", None, "COMMAND_ERROR;"]:
                     new_pin = str(pin) + str(0)
