@@ -5,7 +5,7 @@
 ## Installation
 1. Clone Repository
 ```bash
-git clone https://github.com/trusur/aqms-efs1.git && cd aqms-efs1 && git checkout efs2
+git clone https://github.com/ikhfalFr/aqmsEFS2.git && cd aqmsEFS2 && git checkout EFS2
 ```
 2. Install Python3 Library
 ```bash
