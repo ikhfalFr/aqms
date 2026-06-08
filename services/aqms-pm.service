@@ -7,7 +7,7 @@ Type=simple
 User=mx
 Group=dialout
 WorkingDirectory=/home/mx/aqms-efs2/drivers
-ExecStart=/usr/bin/python3 -u /home/mx/aqms-efs2/drivers/pm_alphasense.py
+ExecStart=/usr/bin/python3 -u /home/mx/aqms-efs2/drivers/pm_alphasense.py 3
 Restart=always
 RestartSec=3
 
