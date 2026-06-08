@@ -29,26 +29,31 @@ sudo cp services/*.service /etc/systemd/system/
 ```bash
 systemctl start aqms-driver-alpha
 systemctl start aqms-averaging
+systemctl start aqms-pm
 ```
 7. Stop Services
 ```bash
 systemctl stop aqms-driver-alpha
 systemctl stop aqms-averaging
+systemctl stop aqms-pm
 ```
 8. Enable automaticly on boot:
 ```bash
 systemctl enable aqms-driver-alpha
 systemctl enable aqms-averaging
+systemctl enable aqms-pm
 ```
 9. Disable service:
 ```bash
 systemctl disable aqms-driver-alpha
 systemctl disable aqms-averaging
+systemctl disable aqms-pm
 ```
 10. Check service:
 ```bash
 systemctl status aqms-driver-alpha
 systemctl status aqms-averaging
+systemctl status aqms-pm
 ```
 
 ## Setup Crontab
