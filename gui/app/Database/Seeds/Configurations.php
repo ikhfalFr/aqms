@@ -11,8 +11,8 @@ class Configurations extends Seeder
 		$this->db->query("TRUNCATE TABLE configurations");
 		$data = [
 			['name' => 'aqms_code', 'content' => 'AQMS_FS2'],
-			['name' => 'id_stasiun', 'content' => 'AQMS_FS2'],
-			['name' => 'nama_stasiun', 'content' => 'AQMS_FS2'],
+			['name' => 'id_stasiun', 'content' => 'AQMS_MASTER_EFS2'],
+			['name' => 'nama_stasiun', 'content' => 'AQMS_MASTER_EFS2'],
 			['name' => 'address', 'content' => 'CIBUBUR'],
 			['name' => 'city', 'content' => 'JAKARTA'],
 			['name' => 'province', 'content' => 'DKI JAKARTA'],
@@ -33,7 +33,7 @@ class Configurations extends Seeder
 			['name' => 'id_sampling', 'content' => ''],
 			['name' => 'start_sampling', 'content' => '0'],
 			['name' => 'is_sentto_klhk', 'content' => '1'],
-			['name' => 'klhk_api_server', 'content' => 'ispu.menlhk.go.id'],
+			['name' => 'klhk_api_server', 'content' => 'ispu.kemenlh.go.id'],
 			['name' => 'klhk_api_username', 'content' => 'pt_trusur_unggul_teknusa'],
 			['name' => 'klhk_api_password', 'content' => 'c6eXK8EUpbuCoaki'],
 			['name' => 'klhk_api_key', 'content' => ''],
