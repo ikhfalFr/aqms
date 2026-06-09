@@ -1,9 +1,9 @@
 [Desktop Entry]
 Encoding=UTF-8
-Name=AQMS_FS2
-Comment=AQMS_FS2
+Name=AQMS_GASES
+Comment=AQMS_GASES
 Icon=gnome-info
-Exec=lxterminal -e '/bin/bash /home/pi/aqmsFS2/aqms_start.sh'
+Exec=lxterminal -e '/bin/bash /home/mx/aqmsGASES/aqms_start.sh'
 Terminal=true
 Type=Application
 Categories=
