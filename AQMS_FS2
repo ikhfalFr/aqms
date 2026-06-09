@@ -4,7 +4,7 @@
 Encoding=UTF-8
 Name=AQMS_FS2
 Comment=AQMS_FS2
-Icon=/home/admin/aqmsFS2/gui/public/img/logo.png
-Exec=sh /home/admin/aqmsFS2/aqms_start.sh
+Icon=/home/admin/aqmsGASES/gui/public/img/logo.png
+Exec=sh /home/admin/aqmsGASES/aqms_start.sh
 Terminal=true
 Type=Application
