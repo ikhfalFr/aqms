@@ -1,0 +1,10 @@
+#!/usr/bin/env xdg-open
+
+[Desktop Entry]
+Encoding=UTF-8
+Name=AQMS_GASES
+Comment=AQMS_GASES
+Icon=/home/admin/aqmsGASES/gui/public/img/logo.png
+Exec=sh /home/admin/aqmsGASES/aqms_start.sh
+Terminal=true
+Type=Application
