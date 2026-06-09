@@ -2,9 +2,9 @@
 
 [Desktop Entry]
 Encoding=UTF-8
-Name=AQMS_FS2
-Comment=AQMS_FS2
-Icon=/home/mx/aqmsFS2/gui/public/img/logo.png
-Exec=sh /home/mx/aqmsFS2/aqms_start.sh
+Name=AQMS_GASES
+Comment=AQMS_GASES
+Icon=/home/mx/aqmsGASES/gui/public/img/logo.png
+Exec=sh /home/mx/aqmsGASES/aqms_start.sh
 Terminal=true
 Type=Application
