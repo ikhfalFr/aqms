@@ -11,8 +11,8 @@ class Configurations extends Seeder
 		$this->db->query("TRUNCATE TABLE configurations");
 		$data = [
 			['name' => 'aqms_code', 'content' => 'AQMS_FS2'],
-			['name' => 'id_stasiun', 'content' => 'AQMS_FS2'],
-			['name' => 'nama_stasiun', 'content' => 'AQMS_FS2'],
+			['name' => 'id_stasiun', 'content' => 'AQMS_GASES'],
+			['name' => 'nama_stasiun', 'content' => 'AQMS_GASES'],
 			['name' => 'address', 'content' => 'CIBUBUR'],
 			['name' => 'city', 'content' => 'JAKARTA'],
 			['name' => 'province', 'content' => 'DKI JAKARTA'],
