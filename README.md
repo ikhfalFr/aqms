@@ -1,4 +1,3 @@
-# AQMS EFS2-HYBRID ARTHUR
 # STREAMING SENSOR PM MENGGUNAKAN USB
 ## Requirements
 `php8.0` or newest, `python3`, `pip3`, `composer`, 'pymodbus versi 2.5'
