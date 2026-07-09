@@ -40,9 +40,15 @@ def exit_handler():
     time.sleep(1)
 
     # Stopping AQMS DM
-    print("Stopping AQMS DM Service...\n")
-    subprocess.Popen("echo mx | sudo -S systemctl stop aqms-dm", shell=True)
-    print("AQMS HC should be stopped...")
+    # print("Stopping AQMS DM Service...\n")
+    # subprocess.Popen("echo mx | sudo -S systemctl stop aqms-dm", shell=True)
+    # print("AQMS HC should be stopped...")
+    # time.sleep(1)
+
+    # Stopping AQMS PM Alphasense
+    print("Stopping AQMS PM Alphasense Service...\n")
+    subprocess.Popen("echo mx | sudo -S systemctl stop aqms-pm", shell=True)
+    print("AQMS PM should be stopped...")
     time.sleep(1)
 
     file = open("test.txt", "w")
@@ -76,9 +82,15 @@ def exit_handler_signal(signum, frame):
     time.sleep(1)
 
     # Stopping AQMS DM
-    print("Stopping AQMS DM Service...\n")
-    subprocess.Popen("echo mx | sudo -S systemctl stop aqms-dm", shell=True)
-    print("AQMS HC should be stopped...")
+    # print("Stopping AQMS DM Service...\n")
+    # subprocess.Popen("echo mx | sudo -S systemctl stop aqms-dm", shell=True)
+    # print("AQMS HC should be stopped...")
+    # time.sleep(1)
+
+    # Stopping AQMS PM Alphasense
+    print("Stopping AQMS PM Service...\n")
+    subprocess.Popen("echo mx | sudo -S systemctl stop aqms-pm", shell=True)
+    print("AQMS PM should be stopped...")
     time.sleep(1)
 
     file = open("test.txt", "w")
@@ -143,8 +155,13 @@ subprocess.Popen("echo mx | sudo -S systemctl restart aqms-sending", shell=True)
 time.sleep(1)
 
 # Running AQMS DM
-print("Checking AQMS DM...\n")
-subprocess.Popen("echo mx | sudo -S systemctl restart aqms-dm", shell=True)
+# print("Checking AQMS DM...\n")
+# subprocess.Popen("echo mx | sudo -S systemctl restart aqms-dm", shell=True)
+# time.sleep(1)
+
+# Running AQMS PM Alphasense
+print("Checking AQMS PM...\n")
+subprocess.Popen("echo mx | sudo -S systemctl restart aqms-pm", shell=True)
 time.sleep(1)
 
 # Check CronJob

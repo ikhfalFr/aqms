@@ -93,7 +93,7 @@
                                 </button>
                             </div>
                         </div>
-                        <?php if ($pump_interval > 0) : ?>
+                        <!-- <?php if ($pump_interval > 0) : ?>
                             <div id="pump" class="my-1 d-flex flex-column flex-md-row justify-content-between align-md-items-center">
                                 <div class="mr-3">
                                     <h7 class="text-light" id="pumpMode" style="display:inline-block;"><b>AUTO</b></h7>
@@ -107,7 +107,7 @@
                                     </button>
                                 </div>
                             </div>
-                        <?php endif ?> 
+                        <?php endif ?>  -->
                     </div>
                 </div>
             </div>
@@ -166,30 +166,30 @@
                             }
 
                         });
-                        try {
-                            let pump_state = data?.config?.pump_state;
-                            let curent = new Date(data?.config?.now);
-                            let pump_last = new Date(data?.config?.pump_last);                            
-                            let pump_interval = data?.config?.pump_interval / 60;
-                            let pump_state_time = (curent - pump_last) / 1000;       
-                            let pump_mode = data?.config?.pump_mode == 1 ? "MANUAL" : "AUTO";                  
-                            let remaining = (pump_interval * 60) - pump_state_time;
-                            let h = Math.floor(remaining / 3600);
-                            let m = Math.floor((remaining - (h * 3600)) / 60);
-                            let s = Math.floor(remaining % 60);
-                            let pumpTimer = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
-                            // let pumpTimer = `${h}:${m}:${s}`;
-                            $('#pumpState').html(pump_state)
-                            $('#pumpMode').html(pump_mode)
+                        // try {
+                        //     let pump_state = data?.config?.pump_state;
+                        //     let curent = new Date(data?.config?.now);
+                        //     let pump_last = new Date(data?.config?.pump_last);                            
+                        //     let pump_interval = data?.config?.pump_interval / 60;
+                        //     let pump_state_time = (curent - pump_last) / 1000;       
+                        //     let pump_mode = data?.config?.pump_mode == 1 ? "MANUAL" : "AUTO";                  
+                        //     let remaining = (pump_interval * 60) - pump_state_time;
+                        //     let h = Math.floor(remaining / 3600);
+                        //     let m = Math.floor((remaining - (h * 3600)) / 60);
+                        //     let s = Math.floor(remaining % 60);
+                        //     let pumpTimer = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+                        //     // let pumpTimer = `${h}:${m}:${s}`;
+                        //     $('#pumpState').html(pump_state)
+                        //     $('#pumpMode').html(pump_mode)
 
-                            if (pumpTimer == `0:0:0` || parseInt(h) < 0 || parseInt(m) < 0 || parseInt(s) < 0) {
-                                $('#pumpTimer').html('Switching...');
-                            }else{
-                                $('#pumpTimer').html(pumpTimer);
-                            }
-                        } catch (err) {
-                            console.log(err)
-                        }
+                        //     if (pumpTimer == `0:0:0` || parseInt(h) < 0 || parseInt(m) < 0 || parseInt(s) < 0) {
+                        //         $('#pumpTimer').html('Switching...');
+                        //     }else{
+                        //         $('#pumpTimer').html(pumpTimer);
+                        //     }
+                        // } catch (err) {
+                        //     console.log(err)
+                        // }
                     }
 
                 },
@@ -234,18 +234,18 @@
         }
 
         // Trigger Switch Pump
-        $("#switch_pump").click(function() {
-            $.ajax({
-                type: 'POST',
-                url: '/switch/pump',
-                dataType: 'json',
-                success: function(data) {
-                    if (data?.success) {
-                        toastr.success(`Waiting for switching...`);   
-                    }
-                }
-            })
-        })
+        // $("#switch_pump").click(function() {
+        //     $.ajax({
+        //         type: 'POST',
+        //         url: '/switch/pump',
+        //         dataType: 'json',
+        //         success: function(data) {
+        //             if (data?.success) {
+        //                 toastr.success(`Waiting for switching...`);   
+        //             }
+        //         }
+        //     })
+        // })
 
         // Trigger Show Last 
         let is_show_time = 0

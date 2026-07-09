@@ -27,6 +27,7 @@ def store_data_batch(
         index = 1
         for part in parts:
             part = part.strip()
+            print("PART_DEBUG:", repr(part))
             if part == "" or part.startswith("SEMEATECH_BATCH") or part.startswith("END_"):
                 continue
 
@@ -186,99 +187,99 @@ def is_motherboard_ready(ser):
         return False
 
 
-def switch_pump(ser, pump_state):
-    try:
-        if ser is None:
-            return False
-        pump_speed = db.get_configuration("pump_speed")
-        pump_speed = 100 if int(pump_speed) > 100 else int(pump_speed)
-        if pump_state == 1:
-            command = "pump2.set." + str(pump_speed) + "#"
-        else:
-            command = "pump.set." + str(pump_speed) + "#"
-        max_timeout = 60
-        timeout = 0
-        response = ""
-        ser.write(bytes(command, "utf-8"))
-        timeout = 0
-        while response.find("END_PUMP") == -1 and timeout < max_timeout:
-            response += ser.readline().decode("utf-8").strip("\r\n")
-            timeout += 1
-        if response.find("END_PUMP") > -1:
-            db.set_configuration("pump_state", pump_state)
-            return True
-        return False
-    except Exception as e:
-        print("Switch Pump Error: " + str(e))
-        return False
+# def switch_pump(ser, pump_state):
+#     try:
+#         if ser is None:
+#             return False
+#         pump_speed = db.get_configuration("pump_speed")
+#         pump_speed = 100 if int(pump_speed) > 100 else int(pump_speed)
+#         if pump_state == 1:
+#             command = "pump2.set." + str(pump_speed) + "#"
+#         else:
+#             command = "pump.set." + str(pump_speed) + "#"
+#         max_timeout = 60
+#         timeout = 0
+#         response = ""
+#         ser.write(bytes(command, "utf-8"))
+#         timeout = 0
+#         while response.find("END_PUMP") == -1 and timeout < max_timeout:
+#             response += ser.readline().decode("utf-8").strip("\r\n")
+#             timeout += 1
+#         if response.find("END_PUMP") > -1:
+#             db.set_configuration("pump_state", pump_state)
+#             return True
+#         return False
+#     except Exception as e:
+#         print("Switch Pump Error: " + str(e))
+#         return False
 
 
-# Check Switch Pump
-def check_pump(ser):
-    try:
-        if ser is None:
-            return False
-        now = datetime.now()
-        pump_last = db.get_configuration("pump_last")
-        pump_interval = db.get_configuration("pump_interval")
-        pump_state = db.get_configuration("pump_state")
-        pump_switch_to = 1 if pump_state == "0" else 0
-        pump_has_trigger_change = db.get_configuration("pump_has_trigger_change")
-        if not pump_has_trigger_change in [""]:
-            if switch_pump(ser, pump_state=pump_has_trigger_change) == True:
-                print("Pump Switch to: " + str(pump_switch_to))
-                db.set_configuration("pump_has_trigger_change", "")
-                db.set_configuration("pump_last", str(now))
-                return True
+# # Check Switch Pump
+# def check_pump(ser):
+#     try:
+#         if ser is None:
+#             return False
+#         now = datetime.now()
+#         pump_last = db.get_configuration("pump_last")
+#         pump_interval = db.get_configuration("pump_interval")
+#         pump_state = db.get_configuration("pump_state")
+#         pump_switch_to = 1 if pump_state == "0" else 0
+#         pump_has_trigger_change = db.get_configuration("pump_has_trigger_change")
+#         if not pump_has_trigger_change in [""]:
+#             if switch_pump(ser, pump_state=pump_has_trigger_change) == True:
+#                 print("Pump Switch to: " + str(pump_switch_to))
+#                 db.set_configuration("pump_has_trigger_change", "")
+#                 db.set_configuration("pump_last", str(now))
+#                 return True
 
-        if pump_last in [None, ""]:
-            db.set_configuration("pump_last", str(now))
-            # Switch Pompa 1
-            print("Pump Switch to: " + str(pump_switch_to))
-            return switch_pump(ser, pump_switch_to)
+#         if pump_last in [None, ""]:
+#             db.set_configuration("pump_last", str(now))
+#             # Switch Pompa 1
+#             print("Pump Switch to: " + str(pump_switch_to))
+#             return switch_pump(ser, pump_switch_to)
 
-        pump_last = datetime.strptime(pump_last, "%Y-%m-%d %H:%M:%S.%f")
-        # Apakah waktu sekarang sudah melewati waktu interval
-        last_switch = now - timedelta(minutes=int(pump_interval))
-        if last_switch > pump_last:
-            db.set_configuration("pump_last", str(now))
-            # Switch Pump
-            print("Pump Switch to: " + str(pump_switch_to))
-            return switch_pump(ser, pump_switch_to)
-        # print("Not Switch Pump")
-        return False
-    except Exception as e:
-        print("Check Pump Error: " + str(e))
-        return False
+#         pump_last = datetime.strptime(pump_last, "%Y-%m-%d %H:%M:%S.%f")
+#         # Apakah waktu sekarang sudah melewati waktu interval
+#         last_switch = now - timedelta(minutes=int(pump_interval))
+#         if last_switch > pump_last:
+#             db.set_configuration("pump_last", str(now))
+#             # Switch Pump
+#             print("Pump Switch to: " + str(pump_switch_to))
+#             return switch_pump(ser, pump_switch_to)
+#         # print("Not Switch Pump")
+#         return False
+#     except Exception as e:
+#         print("Check Pump Error: " + str(e))
+#         return False
 
 
-def update_pump_data(ser, get_pump):
-    # Get pump data from motherboard
-    command = get_pump["command"]
-    prefix_return = get_pump["prefix_return"]
-    response = get_motherboard_value(ser, command, prefix_return)
+# def update_pump_data(ser, get_pump):
+#     # Get pump data from motherboard
+#     command = get_pump["command"]
+#     prefix_return = get_pump["prefix_return"]
+#     response = get_motherboard_value(ser, command, prefix_return)
 
-    if "ERROR;" in response or not response:
-        print("Error Read Pump Data")
-        return False
+#     if "ERROR;" in response or not response:
+#         print("Error Read Pump Data")
+#         return False
 
-    if "END_PLC_DELTA;" in response:
-        response = response.split("END_PLC_DELTA;")[1]
+#     if "END_PLC_DELTA;" in response:
+#         response = response.split("END_PLC_DELTA;")[1]
 
-    res = response.split(";")
-    # SMART_PUMP;[StatusMode];[SpeedPWM];[PumpStatus];[SetTime];[Currenttime];END_SMART_PUMP;"
-    db.set_configuration("pump_speed", res[2])
-    db.set_configuration("pump_state", res[3])
-    db.set_configuration("pump_interval", res[4])
-    db.set_configuration("pump_mode", res[1])
-    print(f"{res[3]} Running")
+#     res = response.split(";")
+#     # SMART_PUMP;[StatusMode];[SpeedPWM];[PumpStatus];[SetTime];[Currenttime];END_SMART_PUMP;"
+#     db.set_configuration("pump_speed", res[2])
+#     db.set_configuration("pump_state", res[3])
+#     db.set_configuration("pump_interval", res[4])
+#     db.set_configuration("pump_mode", res[1])
+#     print(f"{res[3]} Running")
 
-    # Calculate and set the last pump time
-    # time_runner = int(res[4]) - int(res[5])
-    pump_last = datetime.now() - timedelta(seconds=int(res[5]))
-    db.set_configuration("pump_last", pump_last.strftime("%Y-%m-%d %H:%M:%S"))
+#     # Calculate and set the last pump time
+#     # time_runner = int(res[4]) - int(res[5])
+#     pump_last = datetime.now() - timedelta(seconds=int(res[5]))
+#     db.set_configuration("pump_last", pump_last.strftime("%Y-%m-%d %H:%M:%S"))
 
-    return True
+#     return True
 
 
 # Running Main Function
@@ -310,188 +311,188 @@ def main():
             motherboards = get_data_from_motherboard("read")
 
             #  command to get and set smart pump
-            get_pump = get_data_from_motherboard("read_pump")
-            if get_pump:
-                #  check trigger smart pump for setting interval and speed
-                pump_has_trigger_change = db.get_configuration(
-                    "pump_has_trigger_change", "1"
-                )
-                if pump_has_trigger_change:
-                    # set pump speed
-                    set_pump_speed = get_data_from_motherboard("set_pump_speed")
-                    if not set_pump_speed:
-                        print("Command Set Pump Speed not active or not exist")
-                        sleep(2)
-                        continue
-                    pump_speed = (
-                        db.get_configuration("pump_speed") or 100
-                    )  # set default 100% for pump speed
-                    command_pump_speed = set_pump_speed["command"].replace(
-                        "value", str(pump_speed)
-                    )
-                    prefix_return_pump_speed = set_pump_speed["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_pump_speed, prefix_return_pump_speed
-                    )
-                    if "ERROR" in response:
-                        print("Error Set Pump Speed ")
-                        sleep(2)
-                        continue
+            # get_pump = get_data_from_motherboard("read_pump")
+            # if get_pump:
+            #     #  check trigger smart pump for setting interval and speed
+            #     pump_has_trigger_change = db.get_configuration(
+            #         "pump_has_trigger_change", "1"
+            #     )
+            #     if pump_has_trigger_change:
+            #         # set pump speed
+            #         set_pump_speed = get_data_from_motherboard("set_pump_speed")
+            #         if not set_pump_speed:
+            #             print("Command Set Pump Speed not active or not exist")
+            #             sleep(2)
+            #             continue
+            #         pump_speed = (
+            #             db.get_configuration("pump_speed") or 100
+            #         )  # set default 100% for pump speed
+            #         command_pump_speed = set_pump_speed["command"].replace(
+            #             "value", str(pump_speed)
+            #         )
+            #         prefix_return_pump_speed = set_pump_speed["prefix_return"]
+            #         response = get_motherboard_value(
+            #             ser, command_pump_speed, prefix_return_pump_speed
+            #         )
+            #         if "ERROR" in response:
+            #             print("Error Set Pump Speed ")
+            #             sleep(2)
+            #             continue
 
-                    # set pump interval
-                    set_pump_interval = get_data_from_motherboard("set_pump_interval")
-                    if not set_pump_speed:
-                        print("Command Set Pump Interval not active or not exist")
-                        sleep(2)
-                        continue
-                    pump_interval = (
-                        db.get_configuration("pump_interval") or 21600
-                    )  # set default 6 hours for pump interval
-                    command_pump_interval = set_pump_interval["command"].replace(
-                        "value", str(pump_interval)
-                    )
-                    prefix_return_pump_interval = set_pump_interval["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_pump_interval, prefix_return_pump_interval
-                    )
-                    if "ERROR" in response:
-                        print("Error Set Pump Interval")
-                        sleep(2)
-                        continue
+            #         # set pump interval
+            #         set_pump_interval = get_data_from_motherboard("set_pump_interval")
+            #         if not set_pump_speed:
+            #             print("Command Set Pump Interval not active or not exist")
+            #             sleep(2)
+            #             continue
+            #         pump_interval = (
+            #             db.get_configuration("pump_interval") or 21600
+            #         )  # set default 6 hours for pump interval
+            #         command_pump_interval = set_pump_interval["command"].replace(
+            #             "value", str(pump_interval)
+            #         )
+            #         prefix_return_pump_interval = set_pump_interval["prefix_return"]
+            #         response = get_motherboard_value(
+            #             ser, command_pump_interval, prefix_return_pump_interval
+            #         )
+            #         if "ERROR" in response:
+            #             print("Error Set Pump Interval")
+            #             sleep(2)
+            #             continue
 
-                    db.set_configuration("pump_state", response.split(";")[3])
-                    db.set_configuration("pump_speed", response.split(";")[2])
-                    db.set_configuration("pump_interval", response.split(";")[4])
-                    db.set_configuration("pump_has_trigger_change", "")
+            #         db.set_configuration("pump_state", response.split(";")[3])
+            #         db.set_configuration("pump_speed", response.split(";")[2])
+            #         db.set_configuration("pump_interval", response.split(";")[4])
+            #         db.set_configuration("pump_has_trigger_change", "")
 
-                # check last pump to update data pump
-                last_pump = db.get_configuration("pump_last")
-                interval = db.get_configuration("pump_interval")
-                if last_pump in [None, ""]:
-                    # if fails read pump data then repeat proccess
-                    if not update_pump_data(ser, get_pump):
-                        sleep(3)
-                        continue
-                else:
-                    result = datetime.now() - timedelta(
-                        seconds=int(interval)
-                    ) > datetime.strptime(last_pump, "%Y-%m-%d %H:%M:%S")
-                    if result:
-                        if not update_pump_data(ser, get_pump):
-                            continue
+            #     # check last pump to update data pump
+            #     last_pump = db.get_configuration("pump_last")
+            #     interval = db.get_configuration("pump_interval")
+            #     if last_pump in [None, ""]:
+            #         # if fails read pump data then repeat proccess
+            #         if not update_pump_data(ser, get_pump):
+            #             sleep(3)
+            #             continue
+            #     else:
+            #         result = datetime.now() - timedelta(
+            #             seconds=int(interval)
+            #         ) > datetime.strptime(last_pump, "%Y-%m-%d %H:%M:%S")
+            #         if result:
+            #             if not update_pump_data(ser, get_pump):
+            #                 continue
 
-                #  check trigger smart pump for setting interval and speed
-                pump_switch = db.get_configuration("pump_switch", "1")
-                switching_pump = get_data_from_motherboard("mode_pump")
-                if pump_switch:
-                    # command for switching mode pump manua, 0 untuk auto, 1 untuk Manual.
-                    if not switching_pump:
-                        print("Command Togle Pump not active or not exist")
-                        sleep(2)
-                        continue
+            #     #  check trigger smart pump for setting interval and speed
+            #     pump_switch = db.get_configuration("pump_switch", "1")
+            #     switching_pump = get_data_from_motherboard("mode_pump")
+            #     if pump_switch:
+            #         # command for switching mode pump manua, 0 untuk auto, 1 untuk Manual.
+            #         if not switching_pump:
+            #             print("Command Togle Pump not active or not exist")
+            #             sleep(2)
+            #             continue
 
-                    command_switching_pump = switching_pump["command"].replace(
-                        "value", "1"
-                    )
-                    prefix_return_switching_pump = switching_pump["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_switching_pump, prefix_return_switching_pump
-                    )
-                    if "ERROR" in response:
-                        print("Error Switching Pump")
-                        sleep(2)
-                        continue
+            #         command_switching_pump = switching_pump["command"].replace(
+            #             "value", "1"
+            #         )
+            #         prefix_return_switching_pump = switching_pump["prefix_return"]
+            #         response = get_motherboard_value(
+            #             ser, command_switching_pump, prefix_return_switching_pump
+            #         )
+            #         if "ERROR" in response:
+            #             print("Error Switching Pump")
+            #             sleep(2)
+            #             continue
 
-                    # response = "SMART_PUMP;[StatusMode];[SpeedPWM];[PumpStatus];[SetTime];[Currenttime];END_SMART_PUMP;"
-                    mode = response.split(";")[1]
-                    if mode != "1":
-                        sleep(2)
-                        continue
+            #         # response = "SMART_PUMP;[StatusMode];[SpeedPWM];[PumpStatus];[SetTime];[Currenttime];END_SMART_PUMP;"
+            #         mode = response.split(";")[1]
+            #         if mode != "1":
+            #             sleep(2)
+            #             continue
 
-                    # command for switching togle pump
-                    switching_pump = get_data_from_motherboard("switch_pump")
-                    command_switching_pump = switching_pump["command"]
-                    prefix_return_switching_pump = switching_pump["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_switching_pump, prefix_return_switching_pump
-                    )
-                    if "ERROR" in response:
-                        print("Error Togle Pump")
-                        sleep(2)
-                        continue
-                    pump_status = response.split(";")[3]
-                    pump_status_now = db.get_configuration("pump_state")
-                    if pump_status == pump_status_now:
-                        sleep(2)
-                        continue
+            #         # command for switching togle pump
+            #         switching_pump = get_data_from_motherboard("switch_pump")
+            #         command_switching_pump = switching_pump["command"]
+            #         prefix_return_switching_pump = switching_pump["prefix_return"]
+            #         response = get_motherboard_value(
+            #             ser, command_switching_pump, prefix_return_switching_pump
+            #         )
+            #         if "ERROR" in response:
+            #             print("Error Togle Pump")
+            #             sleep(2)
+            #             continue
+            #         pump_status = response.split(";")[3]
+            #         pump_status_now = db.get_configuration("pump_state")
+            #         if pump_status == pump_status_now:
+            #             sleep(2)
+            #             continue
 
-                    # command for switching mode pump auto
-                    switching_pump = get_data_from_motherboard("mode_pump")
-                    command_switching_pump = switching_pump["command"].replace(
-                        "value", "0"
-                    )
-                    prefix_return_switching_pump = switching_pump["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_switching_pump, prefix_return_switching_pump
-                    )
-                    if "ERROR" in response:
-                        print("Error Switching Pump")
-                        sleep(2)
-                        continue
+            #         # command for switching mode pump auto
+            #         switching_pump = get_data_from_motherboard("mode_pump")
+            #         command_switching_pump = switching_pump["command"].replace(
+            #             "value", "0"
+            #         )
+            #         prefix_return_switching_pump = switching_pump["prefix_return"]
+            #         response = get_motherboard_value(
+            #             ser, command_switching_pump, prefix_return_switching_pump
+            #         )
+            #         if "ERROR" in response:
+            #             print("Error Switching Pump")
+            #             sleep(2)
+            #             continue
 
-                    mode = response.split(";")[1]
-                    if mode != "0":
-                        sleep(2)
-                        continue
-                    db.set_configuration("pump_mode", response.split(";")[1])
-                    db.set_configuration("pump_state", response.split(";")[3])
-                    db.set_configuration("pump_switch", None)
+            #         mode = response.split(";")[1]
+            #         if mode != "0":
+            #             sleep(2)
+            #             continue
+            #         db.set_configuration("pump_mode", response.split(";")[1])
+            #         db.set_configuration("pump_state", response.split(";")[3])
+            #         db.set_configuration("pump_switch", None)
 
                 # check proses calibration
-                check_calibration = db.get_calibration_active()
+                # check_calibration = db.get_calibration_active()
                 # parameter_calibration = check_calibration['code'] if check_calibration else None
 
-                if check_calibration:
-                    calibration_type = (
-                        "zero" if check_calibration["calibration_type"] == 0 else "span"
-                    )
-                    get_motherboard = get_data_from_motherboard(calibration_type)
+                # if check_calibration:
+                #     calibration_type = (
+                #         "zero" if check_calibration["calibration_type"] == 0 else "span"
+                #     )
+                #     get_motherboard = get_data_from_motherboard(calibration_type)
 
-                    # start if not executed
-                    if check_calibration["is_executed"] == 0:
-                        command = get_motherboard["command"]
-                        prefix_return = get_motherboard["prefix_return"]
-                        response = get_motherboard_value(ser, command, prefix_return)
-                        if not "SUCCESS" in response:
-                            print("Error Start Calibration")
-                            continue
+                #     # start if not executed
+                #     if check_calibration["is_executed"] == 0:
+                #         command = get_motherboard["command"]
+                #         prefix_return = get_motherboard["prefix_return"]
+                #         response = get_motherboard_value(ser, command, prefix_return)
+                #         if not "SUCCESS" in response:
+                #             print("Error Start Calibration")
+                #             continue
 
-                # Check pump , if manual then switch to auto
-                if db.get_configuration("pump_mode") == "1":
-                    if not switching_pump:
-                        print("Command Togle Pump not active or not exist")
-                        sleep(2)
-                        continue
+                # # Check pump , if manual then switch to auto
+                # if db.get_configuration("pump_mode") == "1":
+                #     if not switching_pump:
+                #         print("Command Togle Pump not active or not exist")
+                #         sleep(2)
+                #         continue
 
-                    command_switching_pump = switching_pump["command"].replace(
-                        "value", "0"
-                    )
-                    prefix_return_switching_pump = switching_pump["prefix_return"]
-                    response = get_motherboard_value(
-                        ser, command_switching_pump, prefix_return_switching_pump
-                    )
-                    if "ERROR" in response:
-                        print("Error Switching Pump")
-                        sleep(2)
-                        continue
+                #     command_switching_pump = switching_pump["command"].replace(
+                #         "value", "0"
+                #     )
+                #     prefix_return_switching_pump = switching_pump["prefix_return"]
+                #     response = get_motherboard_value(
+                #         ser, command_switching_pump, prefix_return_switching_pump
+                #     )
+                #     if "ERROR" in response:
+                #         print("Error Switching Pump")
+                #         sleep(2)
+                #         continue
 
                     # response = "SMART_PUMP;[StatusMode];[SpeedPWM];[PumpStatus];[SetTime];[Currenttime];END_SMART_PUMP;"
-                    mode = response.split(";")[1]
-                    if mode != "0":
-                        sleep(2)
-                        continue
+                    # mode = response.split(";")[1]
+                    # if mode != "0":
+                    #     sleep(2)
+                    #     continue
 
-                    db.set_configuration("pump_mode", mode)
+                    # db.set_configuration("pump_mode", mode)
 
             # process get data sensor
             for motherboard in motherboards:
@@ -504,6 +505,7 @@ def main():
                 retry_count = 0
                 while retry_count < max_retries:
                     response = get_motherboard_value(ser, command, prefix_return)
+                    print("RAW_RESPONSE_PIN", pin, ":", repr(response))
                     if "ERROR_NOT_FOUND" not in response:
                         break
                     print(f"Retry {retry_count + 1} due to ERROR_NOT_FOUND")
