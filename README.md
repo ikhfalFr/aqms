@@ -1,4 +1,4 @@
-# AQMS EFS2-HYBRID ARTHUR
+# STREAMING SENSOR PM MENGGUNAKAN SPI ALPHASENSE
 ## Requirements
 `php8.0` or newest, `python3`, `pip3`, `composer`
 
