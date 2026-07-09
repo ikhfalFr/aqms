@@ -1,4 +1,4 @@
-# STREAMING SENSOR PM MENGGUNAKAN USB
+# STREAMING SENSOR PM MENGGUNAKAN USB SPI Vendor
 ## Requirements
 `php8.0` or newest, `python3`, `pip3`, `composer`, 'pymodbus versi 2.5'
 
