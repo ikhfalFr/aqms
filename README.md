@@ -52,14 +52,14 @@ systemctl status aqms-averaging
 
 ## Setup Crontab
 `sudo crontab -e` then choose `nano`
-  #Average 1 Minute
+1. #Average 1 Minute
 	* * * * * /usr/bin/php /home/mx/aqms-efs2/gui/spark command:avg1min >/dev/null 2>&1
-	#Average 30 Minute
+2. #Average 30 Minute
 	* * * * * /usr/bin/php /home/mx/aqms-efs2/gui/spark command:avg30min >/dev/null 2>&1
-	#Pengiriman data 30 detik
+3. #Pengiriman data 30 detik
 	* * * * * /usr/bin/php /home/mx/aqms-efs2/gui/spark command:sentdata1sec >/dev/null 2>&1
 	* * * * * sleep 30; /usr/bin/php /home/mx/aqms-efs2/gui/spark command:sentdata1sec >/dev/null 2>&1
-	#Pengiriman data rerata 1 menit tiap 30 detik
+4. #Pengiriman data rerata 1 menit tiap 30 detik
 	*/30 * * * * sleep 60; /usr/bin/php /home/mx/aqms-efs2/gui/spark command:sentdata1min >/dev/null 2>&1
-	#Menghapus file log di writeable logs CI
+5. #Menghapus file log di writeable logs CI
 	0 */12 * * * find /home/mx/aqms-efs2/gui/writeable/logs -type f -name 'log-*.log' -mtime +3 -exec rm -f {} \;
