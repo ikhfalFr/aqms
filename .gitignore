@@ -1,0 +1,10 @@
+/gui/writable/cache/*
+/gui/writable/debugbar/*
+/gui/writable/logs/*
+/gui/writable/session/*
+/gui/vendor/*
+/gui/tests/*
+/gui/.env
+.env
+*.bak
+__pycache__
